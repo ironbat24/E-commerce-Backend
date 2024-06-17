@@ -1,0 +1,15 @@
+package com.grocery.repository;
+
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.grocery.model.Product;
+
+public interface ProductRepository extends JpaRepository<Product, Long>{
+	
+//	@Query(nativeQuery = true ,value="select * from product p join product_item pi on p.prod_id=pi.product_id;")
+//	public List<Product> getProdDetails();
+
+//	@Query(nativeQuery = true,value = "select p.prod_name,p.product_img,pi.product_item_id,pi.price,pi.sale_price,pi.qty_in_stock,u.unit_id,u.unit_name from product p join product_item pi on p.product_id=pi.product_id join unit u on u.unit_id=pi.unit_id;")
+//	public List<Product> getDetails();
+}

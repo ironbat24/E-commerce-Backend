@@ -1,0 +1,22 @@
+package com.grocery.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.grocery.exception.ProductException;
+import com.grocery.model.Product;
+
+public interface ProductService {
+	
+	//admin alone Services
+	public Product createProduct(Product prod) throws ProductException;
+	
+	public void deleteProduct(Long productId) throws ProductException;
+	
+	public Product updateProduct(Long productId,Product product)throws ProductException;
+
+	List<Product> getAllProducts();
+	
+	public Product findProductById(Long ProductId) throws ProductException;
+
+}

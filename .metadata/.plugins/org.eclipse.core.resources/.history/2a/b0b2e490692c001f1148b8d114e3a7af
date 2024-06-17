@@ -1,0 +1,74 @@
+package com.grocery.controller;
+
+import com.grocery.dto.ProductDTO;
+import com.grocery.dto.ProductItemDTO;
+import com.grocery.model.ProductItem;
+import com.grocery.service.ProductItemService;
+import com.grocery.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class GroceryController {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductItemService productItemService;
+
+    // Product Endpoints
+
+    @GetMapping("/products")
+    public List<ProductDTO> getAllProducts() {
+        return productService.findAllProducts();
+    }
+
+    @PostMapping("/products")
+    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
+        ProductDTO createdProduct = productService.saveProduct(productDTO);
+        return ResponseEntity.ok(createdProduct);
+    }
+
+    @GetMapping("/products/{id}")
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+        ProductDTO productDTO = productService.findById(id);
+        return productDTO != null ? ResponseEntity.ok(productDTO) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Product Item Endpoints
+
+    @GetMapping("/productItems")
+    public List<ProductItemDTO> getAllProductItems() {
+        return productItemService.findAllProductItems();
+    }
+
+    @PostMapping("/productItems")
+    public ResponseEntity<ProductItem> createProductItem(@RequestBody ProductItemDTO productItemDTO) {
+        ProductItem createdProductItem = productItemService.convertToEntity(productItemDTO);
+        createdProductItem = productItemService.save(createdProductItem);
+        return ResponseEntity.ok(createdProductItem);
+    }
+
+    @GetMapping("/productItems/{id}")
+    public ResponseEntity<ProductItemDTO> getProductItemById(@PathVariable Long id) {
+        ProductItemDTO productItemDTO = productItemService.findById(id);
+        return productItemDTO != null ? ResponseEntity.ok(productItemDTO) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/productItems/{id}")
+    public ResponseEntity<Void> deleteProductItem(@PathVariable Long id) {
+        productItemService.deleteProductItem(id);
+        return ResponseEntity.noContent().build();
+    }
+}

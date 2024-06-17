@@ -1,0 +1,42 @@
+package com.grocery.model;
+
+import java.util.List;
+
+import jakarta.persistence.*;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@ToString
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "prod_id")
+    private Long prodId;
+
+    @Column(name = "prod_name")
+    private String prodName;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "brand")
+    private String brand;
+
+    @Column(name = "img_url")
+    private String imgUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductItem> productItems;
+}

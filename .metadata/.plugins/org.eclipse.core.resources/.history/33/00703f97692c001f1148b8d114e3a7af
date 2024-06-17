@@ -1,0 +1,59 @@
+package com.grocery.service;
+
+import com.grocery.dto.ProductItemDTO;
+import com.grocery.model.ProductItem;
+import com.grocery.repository.ProductItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class ProductItemService {
+
+    @Autowired
+    private ProductItemRepository productItemRepository;
+
+    @Autowired
+    private UnitsService unitsService;
+
+    public List<ProductItemDTO> findAllProductItems() {
+        List<ProductItem> productItems = productItemRepository.findAll();
+        return productItems.stream()
+                           .map(this::convertToDTO)
+                           .collect(Collectors.toList());
+    }
+
+    public ProductItem save(ProductItem productItem) {
+        return productItemRepository.save(productItem);
+    }
+
+    public ProductItemDTO findById(Long id) {
+        return productItemRepository.findById(id).map(this::convertToDTO).orElse(null);
+    }
+
+    public void deleteProductItem(Long id) {
+        productItemRepository.deleteById(id);
+    }
+
+    public ProductItemDTO convertToDTO(ProductItem productItem) {
+        ProductItemDTO dto = new ProductItemDTO();
+        dto.setProductItemId(productItem.getProductItemId());
+        dto.setMrp(productItem.getMrp());
+        dto.setDiscountedPrice(productItem.getDiscountedPrice());
+        dto.setQtyInStock(productItem.getQtyInStock());
+        dto.setUnit(unitsService.convertToDTO(productItem.getUnit()));
+        return dto;
+    }
+
+    public ProductItem convertToEntity(ProductItemDTO productItemDTO) {
+        ProductItem productItem = new ProductItem();
+        productItem.setProductItemId(productItemDTO.getProductItemId());
+        productItem.setMrp(productItemDTO.getMrp());
+        productItem.setDiscountedPrice(productItemDTO.getDiscountedPrice());
+        productItem.setQtyInStock(productItemDTO.getQtyInStock());
+        productItem.setUnit(unitsService.convertToEntity(productItemDTO.getUnit()));
+        return productItem;
+    }
+}

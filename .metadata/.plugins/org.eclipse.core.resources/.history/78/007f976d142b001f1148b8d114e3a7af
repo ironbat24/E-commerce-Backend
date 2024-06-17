@@ -1,0 +1,116 @@
+package com.grocery.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.grocery.model.Category;
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.model.Units;
+import com.grocery.service.CategoryService;
+import com.grocery.service.ProductItemService;
+import com.grocery.service.ProductService;
+import com.grocery.service.UnitsService;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/products")
+public class ProductController {
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductItemService productItemService;
+
+    @Autowired
+    private UnitsService unitsService;
+
+    // Create a new product
+    @PostMapping("/createproduct")
+    public Product createProduct(@RequestBody Product product) {
+        // Handle parent category
+        Category parentCategory = product.getCategory().getParentCategory();
+        if (parentCategory != null && parentCategory.getId() == null) {
+            parentCategory = categoryService.save(parentCategory);
+        }
+
+        // Handle category
+        Category category = product.getCategory();
+        if (category.getId() == null) {
+            category.setParentCategory(parentCategory);
+            category = categoryService.save(category);
+        }
+        product.setCategory(category);
+
+        productService.save(product);
+        
+     // Handle product items
+        for (ProductItem item : product.getProductItems()) {
+            Units unit = item.getUnit();
+            if (unit.getUnitId() == null) {
+                unit = unitsService.save(unit);
+            }
+            item.setUnit(unit);
+            item.setProduct(product);
+            productItemService.save(item);
+        }
+        return product;
+    }
+
+
+    // Retrieve a product by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        Optional<Product> product = productService.findById(id);
+        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Retrieve all products
+    @GetMapping
+    public List<Product> getAllProducts() {
+        return productService.findAll();
+    }
+
+    // Update a product
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productDetails) {
+        Optional<Product> product = productService.findById(id);
+        if (product.isPresent()) {
+            Product updatedProduct = product.get();
+            updatedProduct.setProdName(productDetails.getProdName());
+            updatedProduct.setImgUrl(productDetails.getImgUrl());
+            updatedProduct.setDescription(productDetails.getDescription());
+            updatedProduct.setBrand(productDetails.getBrand());
+            updatedProduct.setCategory(productDetails.getCategory());
+            return ResponseEntity.ok(productService.save(updatedProduct));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Delete a product
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        Optional<Product> product = productService.findById(id);
+        if (product.isPresent()) {
+            productService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}

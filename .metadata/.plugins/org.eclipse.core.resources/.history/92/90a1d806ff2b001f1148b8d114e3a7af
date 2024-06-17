@@ -1,0 +1,80 @@
+package com.grocery.service;
+
+import com.grocery.dto.CategoryDTO;
+import com.grocery.model.Category;
+import com.grocery.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class CategoryService {
+    @Autowired
+    private CategoryRepository categoryRepository;
+    
+    //DTO Operations
+    public Category convertToEntity(CategoryDTO categoryDTO) {
+        if (categoryDTO == null) {
+            return null;
+        }
+
+        Category category = new Category();
+        category.setName(categoryDTO.getName());
+
+        if (categoryDTO.getParentCategory() != null) {
+            Category parentCategory = convertToEntity(categoryDTO.getParentCategory());
+            category.setParentCategory(parentCategory);
+        } else {
+            category.setParentCategory(null);
+        }
+
+        return category;
+    }
+    
+    public CategoryDTO convertToDTO(Category category) {
+        if (category == null) {
+            return null;
+        }
+
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setId(category.getId());
+        categoryDTO.setName(category.getName());
+
+        if (category.getParentCategory() != null) {
+            CategoryDTO parentCategoryDTO = convertToDTO(category.getParentCategory());
+            categoryDTO.setParentCategory(parentCategoryDTO);
+        } else {
+            categoryDTO.setParentCategory(null);
+        }
+
+        return categoryDTO;
+    }
+    
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
+    public Optional<Category> findById(Long id) {
+        return categoryRepository.findById(id);
+    }
+
+    public Category saveCategory(CategoryDTO categoryDto) {
+        return saveCategoryWithParent(categoryDto, null);
+    }
+
+
+    public Category saveCategoryWithParent(CategoryDTO categoryDto, Category parentCategory) {
+        Category category = new Category();
+        category.setName(categoryDto.getName());
+        category.setParentCategory(parentCategory);
+        return categoryRepository.save(category);
+    }
+
+    public void deleteById(Long id) {
+        categoryRepository.deleteById(id);
+    }
+
+
+}

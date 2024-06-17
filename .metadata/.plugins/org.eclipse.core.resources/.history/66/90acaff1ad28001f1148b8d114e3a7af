@@ -1,0 +1,40 @@
+package com.grocery.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.grocery.exception.ProductException;
+import com.grocery.exception.ProductItemException;
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.service.ProductItemService;
+import com.grocery.service.ProductServiceImpl;
+
+@RestController
+@RequestMapping("/productitem")
+public class ProductItemController {
+	
+	@Autowired
+	ProductItemService prodItemService;
+	ProductServiceImpl prodService;
+	
+	@PostMapping("/additem")
+	public void addProductItem(@RequestBody ProductItem prodItem) throws ProductItemException, ProductException {
+		ProductItem productItem = new ProductItem();
+		Product product = prodItem.getProduct();
+		if(prodService.findProductById(product.getProdId()).isEmpty()) {
+			prodService.createProduct(product);
+		};
+		productItem.setPrice(prodItem.getPrice());
+		productItem.setProduct(prodItem.getProduct());
+		productItem.setQtyInStock(prodItem.getQtyInStock());
+		productItem.setSalePrice(prodItem.getSalePrice());
+		productItem.setSKU(prodItem.getSKU());
+//		productItem.setUnit(prodItem.getUnit());
+        prodItemService.createProductItem(productItem);
+	}
+
+}

@@ -1,0 +1,9 @@
+package com.grocery.dto;
+
+import lombok.Data;
+
+@Data
+public class UnitsDTO {
+    private Long unitId;
+    private String unitName;
+}

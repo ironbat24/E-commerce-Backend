@@ -1,0 +1,22 @@
+package com.grocery.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProdDetailsDTO {
+	
+    private String prodName;
+    private String productImg;
+    private Long productItemId;
+    private Double price;
+    private Double salePrice;
+    private Double discountPercentage;
+    private int qtyInStock;
+    private Long unitId;
+    private String unitName;
+
+}

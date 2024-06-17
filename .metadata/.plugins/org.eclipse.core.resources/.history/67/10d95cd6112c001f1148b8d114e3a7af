@@ -1,0 +1,59 @@
+package com.grocery.service;
+
+import com.grocery.dto.CategoryDTO;
+import com.grocery.model.Category;
+import com.grocery.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class CategoryService {
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    public Category save(Category category) {
+        if (category.getParentCategory() != null) {
+            Category savedParentCategory = findOrCreateCategory(category.getParentCategory());
+            category.setParentCategory(savedParentCategory);
+        }
+        return categoryRepository.save(category);
+    }
+
+    public Category findOrCreateCategory(Category category) {
+        Optional<Category> existingCategory = categoryRepository.findByName(category.getName());
+        if (existingCategory.isPresent()) {
+            return existingCategory.get();
+        } else {
+            return save(category);
+        }
+    }
+    
+    @Cacheable("categories")
+    public List<Category> findAllCategories() {
+        return categoryRepository.findAll();
+    }
+
+    public Category convertToEntity(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        category.setName(categoryDTO.getName());
+        if (categoryDTO.getParentCategory() != null) {
+            category.setParentCategory(convertToEntity(categoryDTO.getParentCategory()));
+        }
+        return category;
+    }
+
+    public CategoryDTO convertToDTO(Category category) {
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setId(category.getId());
+        categoryDTO.setName(category.getName());
+        if (category.getParentCategory() != null) {
+            categoryDTO.setParentCategory(convertToDTO(category.getParentCategory()));
+        }
+        return categoryDTO;
+    }
+}

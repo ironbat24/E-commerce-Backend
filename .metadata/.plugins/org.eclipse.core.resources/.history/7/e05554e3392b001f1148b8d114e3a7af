@@ -1,0 +1,129 @@
+package com.grocery.controller;
+
+import com.grocery.dto.ProductDTO;
+import com.grocery.dto.ProductItemDTO;
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.service.ProductItemService;
+import com.grocery.service.ProductService;
+import com.grocery.service.UnitsService;
+import com.grocery.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api")
+public class ProductController {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductItemService productItemService;
+
+    @Autowired
+    private UnitsService unitService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    // Product Endpoints
+
+    @PostMapping("/products/createproduct")
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productDTO) {
+        Product product = productService.convertToEntity(productDTO);
+        Product savedProduct = productService.save(product);
+
+        // Save product items separately to ensure IDs are generated
+        List<ProductItem> savedItems = productDTO.getProductItems().stream().map(itemDTO -> {
+            ProductItem productItem = productItemService.convertToEntity(itemDTO);
+            productItem.setProduct(savedProduct); // Set the saved product
+            return productItemService.save(productItem);
+        }).collect(Collectors.toList());
+        savedProduct.setProductItems(savedItems);
+
+        return ResponseEntity.ok(savedProduct);
+    }
+
+
+    @GetMapping("/products/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        Optional<Product> product = productService.findById(id);
+        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/products")
+    public List<Product> getAllProducts() {
+        return productService.findAll();
+    }
+
+    @PutMapping("/products/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+        Optional<Product> existingProduct = productService.findById(id);
+        if (existingProduct.isPresent()) {
+            Product product = productService.convertToEntity(productDTO);
+            product.setProdId(id); // Ensure the correct ID is set
+            return ResponseEntity.ok(productService.save(product));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        Optional<Product> product = productService.findById(id);
+        if (product.isPresent()) {
+            productService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // ProductItem Endpoints
+
+    @PostMapping("/productItems")
+    public ResponseEntity<ProductItem> createProductItem(@RequestBody ProductItemDTO productItemDTO) {
+        ProductItem productItem = productItemService.convertToEntity(productItemDTO);
+        return ResponseEntity.ok(productItemService.save(productItem));
+    }
+
+    @GetMapping("/productItems/{id}")
+    public ResponseEntity<ProductItem> getProductItemById(@PathVariable Long id) {
+        Optional<ProductItem> productItem = productItemService.findById(id);
+        return productItem.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/productItems")
+    public List<ProductItem> getAllProductItems() {
+        return productItemService.findAll();
+    }
+
+    @PutMapping("/productItems/{id}")
+    public ResponseEntity<ProductItem> updateProductItem(@PathVariable Long id, @RequestBody ProductItemDTO productItemDTO) {
+        Optional<ProductItem> existingProductItem = productItemService.findById(id);
+        if (existingProductItem.isPresent()) {
+            ProductItem productItem = productItemService.convertToEntity(productItemDTO);
+            productItem.setProductItemId(id); // Ensure the correct ID is set
+            return ResponseEntity.ok(productItemService.save(productItem));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/productItems/{id}")
+    public ResponseEntity<Void> deleteProductItem(@PathVariable Long id) {
+        Optional<ProductItem> productItem = productItemService.findById(id);
+        if (productItem.isPresent()) {
+            productItemService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}

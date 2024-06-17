@@ -1,0 +1,50 @@
+package com.grocery.service;
+
+import com.grocery.dto.UnitsDTO;
+import com.grocery.model.Units;
+import com.grocery.repository.UnitsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UnitsService {
+    @Autowired
+    private UnitsRepository unitsRepository;
+
+    public List<Units> findAll() {
+        return unitsRepository.findAll();
+    }
+
+    public Optional<Units> findById(Long id) {
+        return unitsRepository.findById(id);
+    }
+
+    public Units save(Units unit) {
+        return unitsRepository.save(unit);
+    }
+
+    public void deleteById(Long id) {
+        unitsRepository.deleteById(id);
+    }
+
+    public Units convertToEntity(UnitsDTO unitDTO) {
+        Units unit = new Units();
+        unit.setUnitName(unitDTO.getUnitName());
+        return unit;
+    }
+
+    public UnitsDTO convertToDTO(Units unit) {
+        UnitsDTO unitDTO = new UnitsDTO();
+        unitDTO.setUnitId(unit.getUnitId());
+        unitDTO.setUnitName(unit.getUnitName());
+        return unitDTO;
+    }
+
+    public Units findOrCreateUnit(Units unit) {
+        Optional<Units> existingUnit = unitsRepository.findById(unit.getUnitId());
+        return existingUnit.orElseGet(() -> unitsRepository.save(unit));
+    }
+}

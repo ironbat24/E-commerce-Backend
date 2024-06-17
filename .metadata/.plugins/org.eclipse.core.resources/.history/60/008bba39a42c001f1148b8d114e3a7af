@@ -1,0 +1,13 @@
+package com.grocery.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import com.grocery.dto.ProdDetailsDTO;
+import com.grocery.model.ProductItem;
+
+public interface ProductItemRepository extends JpaRepository<ProductItem, Long>{
+	
+}

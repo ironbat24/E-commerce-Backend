@@ -1,0 +1,59 @@
+package com.grocery.dto;
+
+public class ProductDTO {
+    private Long prodId;
+    private String prodName;
+    private String brand;
+    private String description;
+    private String imgUrl;
+    private Long categoryId;
+
+    // Getters and Setters
+    public Long getProdId() {
+        return prodId;
+    }
+
+    public void setProdId(Long prodId) {
+        this.prodId = prodId;
+    }
+
+    public String getProdName() {
+        return prodName;
+    }
+
+    public void setProdName(String prodName) {
+        this.prodName = prodName;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+}

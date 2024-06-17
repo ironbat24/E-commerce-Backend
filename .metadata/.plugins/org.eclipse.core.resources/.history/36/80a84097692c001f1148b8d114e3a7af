@@ -1,0 +1,86 @@
+package com.grocery.service;
+
+import com.grocery.dto.ProductDTO;
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class ProductService {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
+    private ProductItemService productItemService;
+
+    public List<ProductDTO> findAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                       .map(this::convertToDTO)
+                       .collect(Collectors.toList());
+    }
+
+    public ProductDTO saveProduct(ProductDTO productDTO) {
+        Product product = convertToEntity(productDTO);
+        if (product.getCategory() != null) {
+            product.setCategory(categoryService.saveCategory(productDTO.getCategory()));
+        }
+
+        Product savedProduct = productRepository.save(product);
+
+        if (productDTO.getProductItems() != null) {
+            List<ProductItem> savedItems = productDTO.getProductItems().stream().map(itemDTO -> {
+                ProductItem item = productItemService.convertToEntity(itemDTO);
+                item.setProduct(savedProduct);
+                return productItemService.save(item);
+            }).collect(Collectors.toList());
+            savedProduct.setProductItems(savedItems);
+        }
+
+        return convertToDTO(savedProduct);
+    }
+
+    public ProductDTO findById(Long id) {
+        return productRepository.findById(id).map(this::convertToDTO).orElse(null);
+    }
+
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
+
+    private ProductDTO convertToDTO(Product product) {
+        ProductDTO dto = new ProductDTO();
+        dto.setProdId(product.getProdId());
+        dto.setProdName(product.getProdName());
+        dto.setBrand(product.getBrand());
+        dto.setDescription(product.getDescription());
+        dto.setImgUrl(product.getImgUrl());
+        if (product.getCategory() != null) {
+            dto.setCategory(categoryService.convertToDTO(product.getCategory()));
+        }
+        dto.setProductItems(product.getProductItems().stream().map(productItemService::convertToDTO).collect(Collectors.toList()));
+        return dto;
+    }
+
+    private Product convertToEntity(ProductDTO productDTO) {
+        Product product = new Product();
+        product.setProdId(productDTO.getProdId());
+        product.setProdName(productDTO.getProdName());
+        product.setBrand(productDTO.getBrand());
+        product.setDescription(productDTO.getDescription());
+        product.setImgUrl(productDTO.getImgUrl());
+        if (productDTO.getCategory() != null) {
+            product.setCategory(categoryService.convertToEntity(productDTO.getCategory()));
+        }
+        return product;
+    }
+}

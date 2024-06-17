@@ -1,0 +1,40 @@
+package com.grocery.service;
+
+import com.grocery.dto.UnitsDTO;
+import com.grocery.model.Units;
+import com.grocery.repository.UnitsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class UnitsService {
+
+    @Autowired
+    private UnitsRepository unitsRepository;
+
+    public UnitsDTO saveUnits(UnitsDTO unitsDTO) {
+        Units units = convertToEntity(unitsDTO);
+        Units savedUnits = unitsRepository.save(units);
+        return convertToDTO(savedUnits);
+    }
+
+    public UnitsDTO convertToDTO(Units units) {
+        UnitsDTO dto = new UnitsDTO();
+        dto.setUnitId(units.getUnitId());
+        dto.setUnitName(units.getUnitName());
+        return dto;
+    }
+
+    public Units convertToEntity(UnitsDTO unitsDTO) {
+        Units units = new Units();
+        units.setUnitId(unitsDTO.getUnitId());
+        units.setUnitName(unitsDTO.getUnitName());
+        return units;
+    }
+
+    public Optional<Units> findByUnitName(String unitName) {
+        return unitsRepository.findByUnitName(unitName);
+    }
+}

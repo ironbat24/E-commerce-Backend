@@ -1,0 +1,20 @@
+package com.grocery.dto;
+
+import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductDTO {
+    private Long prodId;
+    private String prodName;
+    private String description;
+    private String brand;
+    private String imgUrl;
+    private CategoryDTO category;
+    private List<ProductItemDTO> productItems;
+}

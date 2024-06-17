@@ -1,0 +1,71 @@
+package com.grocery.service;
+
+import com.grocery.dto.ProductItemDTO;
+import com.grocery.dto.UnitsDTO;
+import com.grocery.model.ProductItem;
+import com.grocery.model.Units;
+import com.grocery.repository.ProductItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class ProductItemService {
+
+    @Autowired
+    private ProductItemRepository productItemRepository;
+
+    @Autowired
+    private ProductService productService;
+
+    public List<ProductItemDTO> findAllProductItems() {
+        List<ProductItem> productItems = productItemRepository.findAll();
+        return productItems.stream()
+                           .map(this::convertToDTO)
+                           .collect(Collectors.toList());
+    }
+
+    public ProductItemDTO saveProductItem(ProductItemDTO productItemDTO) {
+        ProductItem productItem = convertToEntity(productItemDTO);
+        ProductItem savedProductItem = productItemRepository.save(productItem);
+        return convertToDTO(savedProductItem);
+    }
+
+    public ProductItemDTO findById(Long id) {
+        return productItemRepository.findById(id).map(this::convertToDTO).orElse(null);
+    }
+
+    public void deleteProductItem(Long id) {
+        productItemRepository.deleteById(id);
+    }
+
+    private ProductItemDTO convertToDTO(ProductItem productItem) {
+        ProductItemDTO dto = new ProductItemDTO();
+        dto.setProductItemId(productItem.getProductItemId());
+        dto.setMrp(productItem.getMrp());
+        dto.setDiscountedPrice(productItem.getDiscountedPrice());
+        dto.setQtyInStock(productItem.getQtyInStock());
+        dto.setProductId(productItem.getProduct().getProdId());
+        dto.setUnit(convertToUnitsDTO(productItem.getUnit()));
+        return dto;
+    }
+
+    private ProductItem convertToEntity(ProductItemDTO productItemDTO) {
+        ProductItem productItem = new ProductItem();
+        productItem.setProductItemId(productItemDTO.getProductItemId());
+        productItem.setMrp(productItemDTO.getMrp());
+        productItem.setDiscountedPrice(productItemDTO.getDiscountedPrice());
+        productItem.setQtyInStock(productItemDTO.getQtyInStock());
+        productItem.setProduct(productService.convertToEntity(productService.findById(productItemDTO.getProductId())));
+        return productItem;
+    }
+
+    private UnitsDTO convertToUnitsDTO(Units unit) {
+        UnitsDTO dto = new UnitsDTO();
+        dto.setUnitId(unit.getUnitId());
+        dto.setUnitName(unit.getUnitName());
+        return dto;
+    }
+}

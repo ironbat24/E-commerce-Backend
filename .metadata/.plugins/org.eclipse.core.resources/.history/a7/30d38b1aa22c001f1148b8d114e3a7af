@@ -1,0 +1,53 @@
+package com.grocery.service;
+
+import com.grocery.model.ProductItem;
+import com.grocery.model.Units;
+import com.grocery.repository.ProductItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class ProductItemService {
+
+    @Autowired
+    private ProductItemRepository productItemRepository;
+
+    @Autowired
+    private UnitsService unitsService;
+
+    @Autowired
+    private ProductService productService;
+    
+    public List<ProductItem> findAllProductItems() {
+        return productItemRepository.findAll();
+    }
+    
+
+    @Transactional
+    public ProductItem saveProductItem(ProductItem productItem) {
+        // Check if the unit exists, if not create it
+        if (productItem.getUnit() != null) {
+            Optional<Units> existingUnit = unitsService.findByUnitName(productItem.getUnit().getUnitName());
+            if (existingUnit.isPresent()) {
+                productItem.setUnit(existingUnit.get());
+            } else {
+                Units newUnit = unitsService.save(productItem.getUnit());
+                productItem.setUnit(newUnit);
+            }
+        }
+        return productItemRepository.save(productItem);
+    }
+
+    @Transactional
+    public void deleteProductItem(Long productItemId) {
+        ProductItem productItem = productItemRepository.findById(productItemId).orElse(null);
+        if (productItem != null) {
+            productItemRepository.delete(productItem);
+            productService.deleteProductIfNoItemsLeft(productItem.getProduct().getId());
+        }
+    }
+}

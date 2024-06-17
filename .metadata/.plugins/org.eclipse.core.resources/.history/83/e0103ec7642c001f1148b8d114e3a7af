@@ -1,0 +1,22 @@
+package com.grocery.dto;
+
+import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductDTO {
+    private Long prodId;
+    private String prodName;
+    private String brand;
+    private String description;
+    private String imgUrl;
+    private Long categoryId; // Just the ID to avoid recursion
+    private List<ProductItemDTO> productItems;
+
+    // Getters and Setters
+}

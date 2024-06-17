@@ -1,0 +1,5 @@
+package com.grocery.config;
+
+public class CacheConfiguration {
+
+}

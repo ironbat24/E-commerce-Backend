@@ -1,0 +1,26 @@
+package com.grocery.service;
+
+import com.grocery.dto.CategoryDTO;
+import com.grocery.model.Category;
+import com.grocery.repository.CategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+
+@Service
+public class CategoryService {
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    public Category saveCategory(CategoryDTO categoryDto) {
+        return saveCategoryWithParent(categoryDto, null);
+    }
+
+    public Category saveCategoryWithParent(CategoryDTO categoryDto, Category parentCategory) {
+        Category category = new Category();
+        category.setName(categoryDto.getName());
+        category.setParentCategory(parentCategory);
+        return categoryRepository.save(category);
+    }
+}

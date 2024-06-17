@@ -1,0 +1,44 @@
+package com.grocery.service;
+
+import com.grocery.model.Category;
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.repository.ProductRepository;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class ProductService {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryService categoryService;
+    
+    
+    public List<Product> findAllProducts() {
+        return productRepository.findAll();
+    }
+    
+
+    @Transactional
+    public Product saveProduct(Product product) {
+        if (product.getCategory() != null) {
+            Category category = categoryService.findByName(product.getCategory().getName())
+                    .orElseGet(() -> categoryService.saveCategory(product.getCategory()));
+            product.setCategory(category);
+        }
+        return productRepository.save(product);
+    }
+
+    @Transactional
+    public void deleteProduct(Long productId) {
+        productRepository.deleteById(productId);
+    }
+
+}

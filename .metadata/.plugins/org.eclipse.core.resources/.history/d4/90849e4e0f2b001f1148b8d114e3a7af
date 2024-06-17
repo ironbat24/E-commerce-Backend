@@ -1,0 +1,38 @@
+package com.grocery.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.grocery.model.ProductItem;
+import com.grocery.repository.ProductItemRepository;
+
+@Service
+public class ProductItemService{
+	
+	@Autowired
+	ProductItemRepository prodItemRepo;
+
+	
+	public ProductItem createProductItem(ProductItem prodItem){
+		prodItemRepo.save(prodItem);
+		return prodItem;
+		
+	}
+
+
+	public ProductItem deleteProductItem(Long productItemId){
+		// TODO Auto-generated method stub
+		return null;
+		
+	}
+	
+
+	public ProductItem updateProduct(Long productId, ProductItem prodItem){
+		// TODO Auto-generated method stub
+		return null;
+		
+	}
+
+
+
+}

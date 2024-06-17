@@ -1,0 +1,16 @@
+package com.grocery.dto;
+
+import lombok.Data;
+
+
+@Data
+public class ProductItemDTO {
+    private Long productItemId;
+    private String SKU;
+    private double price;
+    private double salePrice;
+    private int qtyInStock;
+    private ProductDTO product;
+    private UnitsDTO unit;
+
+}

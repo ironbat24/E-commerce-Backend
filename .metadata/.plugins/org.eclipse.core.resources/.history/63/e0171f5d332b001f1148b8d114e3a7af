@@ -1,0 +1,32 @@
+package com.grocery.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.grocery.model.Units;
+import com.grocery.repository.UnitsRepository;
+
+@Service
+public class UnitsService {
+    @Autowired
+    private UnitsRepository unitsRepository;
+
+    public List<Units> findAll() {
+        return unitsRepository.findAll();
+    }
+
+    public Optional<Units> findById(Long id) {
+        return unitsRepository.findById(id);
+    }
+
+    public Units save(Units unit) {
+        return unitsRepository.save(unit);
+    }
+
+    public void deleteById(Long id) {
+    	unitsRepository.deleteById(id);
+    }
+}

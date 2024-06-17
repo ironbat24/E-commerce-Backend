@@ -1,0 +1,50 @@
+package com.grocery.service;
+
+import com.grocery.dto.*;
+import com.grocery.model.*;
+import com.grocery.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class CategoryService {
+    @Autowired
+    private CategoryRepository repository;
+
+    public List<Category> findAll() {
+        return repository.findAll();
+    }
+
+    public Optional<Category> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    public Category save(Category category) {
+        return repository.save(category);
+    }
+
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
+
+    public Category convertToEntity(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        category.setName(categoryDTO.getName());
+        category.setParentCategory(convertToEntity(categoryDTO.getParentCategory()));
+        return category;
+    }
+
+    public CategoryDTO convertToDTO(Category category) {
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setId(category.getId());
+        categoryDTO.setName(category.getName());
+        categoryDTO.setParentCategory(convertToDTO(category.getParentCategory()));
+        return categoryDTO;
+    }
+}
+
+

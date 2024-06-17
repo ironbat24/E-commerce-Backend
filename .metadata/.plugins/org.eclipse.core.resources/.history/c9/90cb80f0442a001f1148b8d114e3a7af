@@ -1,0 +1,105 @@
+package com.grocery.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.grocery.exception.CategoryException;
+import com.grocery.exception.ProductException;
+import com.grocery.exception.ProductItemException;
+import com.grocery.model.Category;
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.model.Units;
+import com.grocery.service.CategoryService;
+import com.grocery.service.ProductItemService;
+import com.grocery.service.ProductService;
+import com.grocery.service.UnitsService;
+
+@RestController
+@RequestMapping("/productitem")
+public class ProductItemController {
+	
+	@Autowired
+	ProductItemService prodItemService;
+	@Autowired
+	ProductService prodService;
+	@Autowired
+	CategoryService categoryService;
+	@Autowired
+	UnitsService unitsService;
+
+
+    @PostMapping("/addItem")
+    public ProductItem createProductItem(@RequestBody ProductItem item) throws ProductException, CategoryException {
+        // Ensure the product category hierarchy is handled
+        Category parentCategory = item.getProduct().getCategory().getParentCategory();
+        if (parentCategory != null && parentCategory.getId() == null) {
+            parentCategory = categoryService.createCategory(parentCategory);
+        }
+        Category category = item.getProduct().getCategory();
+        if (category.getId() == null) {
+            category.setParentCategory(parentCategory);
+            category = categoryService.createCategory(category);
+        }
+        item.getProduct().setCategory(category);
+
+        // Ensure the unit is saved
+        Units unit = item.getUnit();
+        if (unit.getUnitId() == null) {
+            unit = unitsService.createUnit(unit);
+        }
+        item.setUnit(unit);
+
+        // Ensure the product is saved
+        Product product = item.getProduct();
+        if (product.getProdId() == null) {
+            product = prodService.createProduct(product);
+        }
+        item.setProduct(product);
+
+        // Save the product item
+        return prodItemService.createProductItem(item);
+    }
+
+    
+//	@PostMapping("/addproduct")
+//	public void addProduct(@RequestBody Product prod) throws ProductException, CategoryException {
+//		Category thisCategory = prod.getCategory();
+//		Category existingCategory = cs.findCategoryById(thisCategory.getId());
+//		if(existingCategory == null) {
+//			cs.createCategory(thisCategory);
+//		}
+//		Product product=new Product();
+//        product.setProdName(prod.getProdName());
+//        product.setDescription(prod.getDescription());
+//        product.setBrand(prod.getBrand());
+//        product.setImgUrl(prod.getImgUrl());
+//        product.setCategory(prod.getCategory());
+//		ps.createProduct(product);
+//		
+//	}
+//	
+//	@GetMapping("/viewproducts")
+//	public List<Product> viewProducts() throws ProductException{
+//		List<Product> products = ps.getAllProducts();
+//		return products;
+//		
+//	}
+//	
+//	@DeleteMapping("/deleteproduct/{id}")
+//	public void deleteProduct(@PathVariable Long id) throws ProductException {
+//		ps.deleteProduct(id);
+//	}
+//	
+//	@PutMapping("/updateproduct/{id}")
+//	public void updateProduct(@PathVariable Long id, @RequestBody )
+
+}

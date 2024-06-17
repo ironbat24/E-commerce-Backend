@@ -1,0 +1,14 @@
+package com.grocery.dto;
+
+import lombok.Data;
+
+@Data
+public class ProductItemDTO {
+    private Long productItemId;
+    private Long mrp;
+    private Long discountedPrice;
+    private int qtyInStock;
+    private ProductDTO product;
+    private UnitsDTO unit;
+}
+

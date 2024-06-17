@@ -1,0 +1,47 @@
+package com.grocery.service;
+
+import com.grocery.dto.ProductItemDTO;
+import com.grocery.model.ProductItem;
+import com.grocery.model.Units;
+import com.grocery.repository.ProductItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
+
+@Service
+public class ProductItemService {
+
+    @Autowired
+    private ProductItemRepository productItemRepository;
+
+    @Autowired
+    private UnitsService unitsService;
+
+    @Transactional
+    public ProductItem save(ProductItem productItem) {
+        // Ensure that the Unit is saved before saving ProductItem
+        if (productItem.getUnit() != null && productItem.getUnit().getUnitId() == null) {
+            Units savedUnit = unitsService.save(productItem.getUnit());
+            productItem.setUnit(savedUnit);
+        }
+        return productItemRepository.save(productItem);
+    }
+
+    public ProductItem convertToEntity(ProductItemDTO productItemDTO) {
+        ProductItem productItem = new ProductItem();
+        productItem.setMrp(productItemDTO.getMrp());
+        productItem.setDiscountedPrice(productItemDTO.getDiscountedPrice());
+        productItem.setQtyInStock(productItemDTO.getQtyInStock());
+        productItem.setUnit(unitsService.convertToEntity(productItemDTO.getUnit()));
+        return productItem;
+    }
+
+    public ProductItemDTO convertToDTO(ProductItem productItem) {
+        ProductItemDTO productItemDTO = new ProductItemDTO();
+        productItemDTO.setMrp(productItem.getMrp());
+        productItemDTO.setDiscountedPrice(productItem.getDiscountedPrice());
+        productItemDTO.setQtyInStock(productItem.getQtyInStock());
+        productItemDTO.setUnit(unitsService.convertToDTO(productItem.getUnit()));
+        return productItemDTO;
+    }
+}

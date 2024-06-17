@@ -1,0 +1,87 @@
+package com.grocery.dto;
+
+public class ProdDetailsDTO {
+    private String prodName;
+    private String productImg;
+    private Long productItemId;
+    private Double price;
+    private Double salePrice;
+    private Double discountPercentage;
+    private int qtyInStock;
+    private Long unitId;
+    private String unitName;
+
+    // Getters and Setters
+
+    public String getProdName() {
+        return prodName;
+    }
+
+    public void setProdName(String prodName) {
+        this.prodName = prodName;
+    }
+
+    public String getProductImg() {
+        return productImg;
+    }
+
+    public void setProductImg(String productImg) {
+        this.productImg = productImg;
+    }
+
+    public Long getProductItemId() {
+        return productItemId;
+    }
+
+    public void setProductItemId(Long productItemId) {
+        this.productItemId = productItemId;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Double getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(Double salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public Double getDiscountPercentage() {
+        return discountPercentage;
+    }
+
+    public void setDiscountPercentage(Double discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
+
+    public int getQtyInStock() {
+        return qtyInStock;
+    }
+
+    public void setQtyInStock(int qtyInStock) {
+        this.qtyInStock = qtyInStock;
+    }
+
+    public Long getUnitId() {
+        return unitId;
+    }
+
+    public void setUnitId(Long unitId) {
+        this.unitId = unitId;
+    }
+
+    public String getUnitName() {
+        return unitName;
+    }
+
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
+}

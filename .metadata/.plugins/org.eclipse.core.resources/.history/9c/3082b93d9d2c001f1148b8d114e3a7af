@@ -1,0 +1,100 @@
+package com.grocery.controller;
+
+import com.grocery.exception.ProductException;
+import com.grocery.model.Category;
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.service.CategoryService;
+import com.grocery.service.ProductItemService;
+import com.grocery.service.ProductService;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api")
+@CrossOrigin("*")
+public class GroceryController {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductItemService productItemService;
+    
+    @Autowired
+    private CategoryService categoryService;
+
+    // Product Endpoints
+
+    @PostMapping("/products/createproduct")
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        Product createdProduct = productService.saveProduct(product);
+        return ResponseEntity.ok(createdProduct);
+    }
+    
+    @PostMapping("/products/create")
+    public ResponseEntity<Product> createProductWithDetails(@RequestBody Product product) {
+        Product createdProduct = productService.saveProductWithDetails(product);
+        return ResponseEntity.ok(createdProduct);
+    }
+    
+    @PutMapping("/products/editproduct/{id}")
+    public ResponseEntity<Product> editProduct(@PathVariable Long id, @RequestBody Product product) throws ProductException{
+        Product updatedProduct = productService.updateProduct(id, product);
+        return ResponseEntity.ok(updatedProduct);
+    	
+    }
+    
+    @GetMapping("/products/viewproducts")
+    @Cacheable("products")
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.findAllProducts();
+        return ResponseEntity.ok(products);
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    
+    
+    // Product Item Endpoints
+
+    @PostMapping("/productItems")
+    public ResponseEntity<ProductItem> createProductItem(@RequestBody ProductItem productItem) {
+        ProductItem createdProductItem = productItemService.saveProductItem(productItem);
+        return ResponseEntity.ok(createdProductItem);
+    }
+
+    @DeleteMapping("/productItems/{id}")
+    public ResponseEntity<Void> deleteProductItem(@PathVariable Long id) {
+        productItemService.deleteProductItem(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/productItems")
+    public ResponseEntity<List<ProductItem>> getAllProductItems() {
+        List<ProductItem> productItems = productItemService.findAllProductItems();
+        return ResponseEntity.ok(productItems);
+    }
+    
+    @GetMapping("/productItems/getdetails")
+    public ResponseEntity<List<String>> getDetails() {
+        List<String> productItems = productItemService.getDetails();
+        return ResponseEntity.ok(productItems);
+    }
+    
+    // Category Endpoints
+    @GetMapping("/categories/viewcategories")
+    public ResponseEntity<List<Category>> getAllCategories() {
+    	List<Category> categories = categoryService.findAllCategories();
+    	return ResponseEntity.ok(categories);
+    }
+}

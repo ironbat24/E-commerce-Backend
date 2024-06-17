@@ -1,0 +1,18 @@
+package com.grocery.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.grocery.model.Units;
+import com.grocery.repository.UnitsRepository;
+
+public class UnitsService {
+	
+	@Autowired
+	UnitsRepository unitsRepository;
+	
+	public Units save(Units unit) {
+		return unitsRepository.save(unit);
+		
+	}
+
+}

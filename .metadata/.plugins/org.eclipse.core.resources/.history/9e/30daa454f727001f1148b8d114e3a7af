@@ -1,0 +1,14 @@
+package com.grocery.service;
+
+import com.grocery.exception.ProductException;
+import com.grocery.model.ProductItem;
+
+public interface ProductItemService {
+	
+	public ProductItem createProduct(ProductItem prodItem) throws ProductException;
+	
+	public void deleteProductItem(Long productItemId) throws ProductException;
+	
+	public ProductItem updateProduct(Long productId,ProductItem prodItem)throws ProductException;
+
+}

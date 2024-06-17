@@ -1,0 +1,63 @@
+package com.grocery.controller;
+
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.service.ProductItemService;
+import com.grocery.service.ProductService;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api")
+public class GroceryController {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductItemService productItemService;
+
+    // Product Endpoints
+
+    @PostMapping("/products/createproduct")
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        Product createdProduct = productService.saveProduct(product);
+        return ResponseEntity.ok(createdProduct);
+    }
+    
+    @GetMapping("/products/viewproducts")
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.findAllProducts();
+        return ResponseEntity.ok(products);
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Product Item Endpoints
+
+    @PostMapping("/productItems")
+    public ResponseEntity<ProductItem> createProductItem(@RequestBody ProductItem productItem) {
+        ProductItem createdProductItem = productItemService.saveProductItem(productItem);
+        return ResponseEntity.ok(createdProductItem);
+    }
+
+    @DeleteMapping("/productItems/{id}")
+    public ResponseEntity<Void> deleteProductItem(@PathVariable Long id) {
+        productItemService.deleteProductItem(id);
+        return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/productItems")
+    public ResponseEntity<List<ProductItem>> getAllProductItems() {
+        List<ProductItem> productItems = productItemService.findAllProductItems();
+        return ResponseEntity.ok(productItems);
+    }
+}

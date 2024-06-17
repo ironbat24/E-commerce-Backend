@@ -1,0 +1,12 @@
+package com.grocery.dto;
+
+import java.util.List;
+
+public class CategoryDTO {
+    private Long id;
+    private String name;
+    private Long parentCategoryId; // Just the ID to avoid recursion
+    private List<CategoryDTO> subCategories;
+
+    // Getters and Setters
+}

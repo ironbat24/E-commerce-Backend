@@ -1,0 +1,5 @@
+package com.grocery.repository;
+
+public interface ProductRepository {
+
+}

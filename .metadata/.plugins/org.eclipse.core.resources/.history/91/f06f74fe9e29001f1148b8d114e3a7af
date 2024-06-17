@@ -1,0 +1,14 @@
+package com.grocery.service;
+
+import com.grocery.exception.UnitsException;
+import com.grocery.model.Units;
+
+public interface UnitsService {
+	
+	public Units createUnit(Units unitDet) throws UnitsException;
+	
+	public void deleteUnit(Long unitId) throws UnitsException;
+	
+	public Units updateUnit(Long unitId,Units newUnit)throws UnitsException;
+
+}

@@ -1,0 +1,17 @@
+package com.grocery.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProductItemDTO {
+    private Long productItemId;
+    private Long mrp;
+    private Long discountedPrice;
+    private int qtyInStock;
+    private Long productId;
+    private UnitsDTO unit;
+}

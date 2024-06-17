@@ -1,0 +1,31 @@
+package com.grocery.service;
+
+import com.grocery.model.ProductItem;
+import com.grocery.repository.ProductItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class ProductItemService {
+    @Autowired
+    private ProductItemRepository repository;
+
+    public List<ProductItem> findAll() {
+        return repository.findAll();
+    }
+
+    public Optional<ProductItem> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    public ProductItem save(ProductItem item) {
+        return repository.save(item);
+    }
+
+    public void deleteById(Long id) {
+        repository.deleteById(id);
+    }
+}

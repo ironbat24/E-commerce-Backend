@@ -1,0 +1,58 @@
+package com.grocery.service;
+
+import com.grocery.dto.ProductItemDTO;
+import com.grocery.model.ProductItem;
+import com.grocery.model.Units;
+import com.grocery.repository.ProductItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class ProductItemService {
+    @Autowired
+    private ProductItemRepository productItemRepository;
+
+    
+    @Autowired
+    private UnitsService unitsService;
+    
+    public ProductItem convertToEntity(ProductItemDTO itemDTO) {
+        ProductItem item = new ProductItem();
+        item.setMrp(itemDTO.getMrp());
+        item.setDiscountedPrice(itemDTO.getDiscountedPrice());
+        item.setQtyInStock(itemDTO.getQtyInStock());
+        item.setUnit(unitsService.convertToEntity(itemDTO.getUnit()));
+        return item;
+    }
+
+    public ProductItemDTO convertToDTO(ProductItem item) {
+        ProductItemDTO itemDTO = new ProductItemDTO();
+        itemDTO.setProductItemId(item.getProductItemId());
+        itemDTO.setMrp(item.getMrp());
+        itemDTO.setDiscountedPrice(item.getDiscountedPrice());
+        itemDTO.setQtyInStock(item.getQtyInStock());
+        itemDTO.setProductId(item.getProduct().getProdId());
+        itemDTO.setUnit(unitsService.convertToDTO(item.getUnit()));
+        return itemDTO;
+    }
+
+    public List<ProductItem> findAll() {
+        return productItemRepository.findAll();
+    }
+
+    public Optional<ProductItem> findById(Long id) {
+        return productItemRepository.findById(id);
+    }
+
+    public ProductItem save(ProductItem item) {
+        return productItemRepository.save(item);
+    }
+
+    public void deleteById(Long id) {
+        productItemRepository.deleteById(id);
+    }
+
+}

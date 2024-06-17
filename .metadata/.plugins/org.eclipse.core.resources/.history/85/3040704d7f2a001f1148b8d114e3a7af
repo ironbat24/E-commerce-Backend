@@ -1,0 +1,13 @@
+package com.grocery.dto;
+
+public class ProductItemDTO {
+    private Long productItemId;
+    private String SKU;
+    private double price;
+    private double salePrice;
+    private int qtyInStock;
+    private ProductDTO product;
+    private Units unit;
+
+    // Getters and setters
+}

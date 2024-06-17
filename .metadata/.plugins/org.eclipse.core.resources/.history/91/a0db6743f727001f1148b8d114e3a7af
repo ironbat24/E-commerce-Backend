@@ -1,0 +1,5 @@
+package com.grocery.exception;
+
+public class ProductItemException {
+
+}

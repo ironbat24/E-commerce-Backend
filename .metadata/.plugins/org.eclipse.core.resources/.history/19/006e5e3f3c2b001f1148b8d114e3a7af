@@ -1,0 +1,50 @@
+package com.grocery.controller;
+
+import com.grocery.dto.ProductDTO;
+import com.grocery.dto.ProductItemDTO;
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.service.ProductItemService;
+import com.grocery.service.ProductService;
+import com.grocery.service.UnitsService;
+import com.grocery.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api")
+public class ProductController {
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductItemService productItemService;
+
+    @Autowired
+    private UnitsService unitService;
+
+    @Autowired
+    private CategoryService categoryService;
+
+    // Other methods...
+
+    @DeleteMapping("/productItems/{id}")
+    public ResponseEntity<Void> deleteProductItem(@PathVariable Long id) {
+        Optional<ProductItem> productItem = productItemService.findById(id);
+        if (productItem.isPresent()) {
+            productItemService.deleteById(id);
+            Product product = productItem.get().getProduct();
+            if (product.getProductItems().isEmpty()) {
+                productService.deleteById(product.getProdId());
+            }
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}

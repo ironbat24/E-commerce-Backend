@@ -1,0 +1,15 @@
+package com.grocery.dto;
+
+import lombok.Data;
+
+import com.grocery.model.Category;
+
+@Data
+public class ProductDTO {
+    private Long prodId;
+    private String prodName;
+    private String description;
+    private String brand;
+    private String imgUrl;
+    private CategoryDTO category;
+}
