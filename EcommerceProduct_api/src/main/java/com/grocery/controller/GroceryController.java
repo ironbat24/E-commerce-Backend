@@ -2,6 +2,7 @@ package com.grocery.controller;
 
 import com.grocery.dto.ProductDetailDTO;
 import com.grocery.exception.ProductException;
+import com.grocery.exception.ProductItemException;
 import com.grocery.model.Category;
 import com.grocery.model.Product;
 import com.grocery.model.ProductItem;
@@ -33,16 +34,11 @@ public class GroceryController {
     // Product Endpoints
 
     @GetMapping("/products/details")
+    @Cacheable("products")
     public List<ProductDetailDTO> getProductDetails() {
         return productService.getProductDetails();
     }
 
-    @PostMapping("/products/createproduct")
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product createdProduct = productService.saveProduct(product);
-        return ResponseEntity.ok(createdProduct);
-    }
-    
     @PostMapping("/products/create")
     public ResponseEntity<Product> createProductWithDetails(@RequestBody Product product) {
         Product createdProduct = productService.saveProductWithDetails(product);
@@ -57,38 +53,41 @@ public class GroceryController {
     }
     
     @GetMapping("/products/viewproducts")
-    @Cacheable("products")
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.findAllProducts();
         return ResponseEntity.ok(products);
     }
 
     @DeleteMapping("/products/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
     }
 
     
     
+    
     // Product Item Endpoints
 
-    @PostMapping("/productItems")
+    @PostMapping("/productitems")
     public ResponseEntity<ProductItem> createProductItem(@RequestBody ProductItem productItem) {
         ProductItem createdProductItem = productItemService.saveProductItem(productItem);
         return ResponseEntity.ok(createdProductItem);
     }
 
-    @DeleteMapping("/productItems/{id}")
-    public ResponseEntity<Void> deleteProductItem(@PathVariable Long id) {
+    @DeleteMapping("/productitems/delete/{id}")
+    public void deleteProductItem(@PathVariable Long id) {
         productItemService.deleteProductItem(id);
-        return ResponseEntity.noContent().build();
     }
     
-    @GetMapping("/productItems")
-    public ResponseEntity<List<ProductItem>> getAllProductItems() {
-        List<ProductItem> productItems = productItemService.findAllProductItems();
+    @GetMapping("/productitems")
+    public ResponseEntity<List<ProductDetailDTO>> getAllProductItems() {
+        List<ProductDetailDTO> productItems = productService.getProductDetails();
         return ResponseEntity.ok(productItems);
+    }
+    
+    @PutMapping("/productitems/quantity/{productItemId}/{newQuantity}")
+    public ProductItem updateQuantityInStock(@PathVariable Long productItemId, @PathVariable int newQuantity) throws ProductItemException {
+        return productItemService.updateStockQuantity(productItemId, newQuantity);
     }
     
 

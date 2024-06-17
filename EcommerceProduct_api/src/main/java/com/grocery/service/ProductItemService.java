@@ -1,5 +1,6 @@
 package com.grocery.service;
 
+import com.grocery.exception.ProductItemException;
 import com.grocery.model.ProductItem;
 import com.grocery.model.Units;
 import com.grocery.repository.ProductItemRepository;
@@ -48,5 +49,13 @@ public class ProductItemService {
             productItemRepository.delete(productItem);
             productService.deleteProductIfNoItemsLeft(productItem.getProduct().getId());
         }
+    }
+    
+    @Transactional
+    public ProductItem updateStockQuantity(Long productItemId, int newQuantity) throws ProductItemException{
+        ProductItem productItem = productItemRepository.findById(productItemId)
+                .orElseThrow(()->new ProductItemException("No product item found for the id: "+productItemId));
+        productItem.setQuantityInStock(newQuantity);
+        return productItemRepository.save(productItem);
     }
 }

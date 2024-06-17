@@ -16,7 +16,6 @@ public class ProductDetailDTO {
     private Long unitId;
     private String unitName;
 
-    // Getters and Setters
 
     public Long getProductId() {
         return productId;

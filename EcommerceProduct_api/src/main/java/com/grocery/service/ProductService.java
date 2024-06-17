@@ -32,9 +32,6 @@ public class ProductService {
     @Autowired
     private UnitsService unitService;
     
-    @Autowired
-    private EntityManager entityManager;
-
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     public List<Product> findAllProducts() {
@@ -45,15 +42,7 @@ public class ProductService {
     	return productRepository.findById(id).orElseThrow(() -> new ProductException("Product not found with id " + id));
     }
 
-    @Transactional
-    public Product saveProduct(Product product) {
-        if (product.getCategory() != null) {
-            Category category = categoryService.findByName(product.getCategory().getName())
-                    .orElseGet(() -> categoryService.saveCategory(product.getCategory()));
-            product.setCategory(category);
-        }
-        return productRepository.save(product);
-    }
+
 
     @Transactional
     public Product saveProductWithDetails(Product product) {
@@ -148,16 +137,7 @@ public class ProductService {
     }
 
     public List<ProductDetailDTO> getProductDetails() {
-        String sql = "SELECT p.product_id, p.prod_name, p.product_img, p.brand, p.description, " +
-                     "pi.product_item_id, pi.price, pi.sale_price, (pi.sale_price/pi.price*100) AS discount_percentage, " +
-                     "pi.qty_in_stock, u.unit_id, u.unit_name " +
-                     "FROM product p " +
-                     "JOIN product_item pi ON p.product_id = pi.product_id " +
-                     "JOIN unit u ON u.unit_id = pi.unit_id";
-        
-        Query query = entityManager.createNativeQuery(sql);
-        List<Object[]> results = query.getResultList();
-
+        List<Object[]> results = productRepository.findProductDetails();
         return results.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
