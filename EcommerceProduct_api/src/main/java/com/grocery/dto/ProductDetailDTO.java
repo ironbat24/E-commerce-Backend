@@ -1,6 +1,7 @@
 package com.grocery.dto;
 
 public class ProductDetailDTO {
+	private String categoryName;
     private Long productId;
     private String prodName;
     private String productImg;
@@ -17,6 +18,14 @@ public class ProductDetailDTO {
     private String unitName;
 
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+    
     public Long getProductId() {
         return productId;
     }

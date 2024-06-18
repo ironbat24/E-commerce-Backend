@@ -11,6 +11,7 @@ import com.grocery.service.ProductItemService;
 import com.grocery.service.ProductService;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -37,6 +38,13 @@ public class GroceryController {
     @Cacheable("products")
     public List<ProductDetailDTO> getProductDetails() {
         return productService.getProductDetails();
+    }
+    
+    @GetMapping("/products/getdetail/{productItemId}")
+    public ResponseEntity<ProductDetailDTO> getProductDetail(@PathVariable Long productItemId) {
+        Optional<ProductDetailDTO> productDetail = productService.getProductDetailByProductItemId(productItemId);
+        return productDetail.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/products/create")
@@ -89,7 +97,6 @@ public class GroceryController {
     public ProductItem updateQuantityInStock(@PathVariable Long productItemId, @PathVariable int newQuantity) throws ProductItemException {
         return productItemService.updateStockQuantity(productItemId, newQuantity);
     }
-    
 
     
     

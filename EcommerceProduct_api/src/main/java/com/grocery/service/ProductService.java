@@ -8,9 +8,6 @@ import com.grocery.model.ProductItem;
 import com.grocery.model.Units;
 import com.grocery.repository.ProductRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,10 +84,7 @@ public class ProductService {
             productRepository.delete(product);
         }
     }
-    
-//    public List<Product> getDetails() {
-//        return productRepository.getDetails();
-//    }
+
 
     @Transactional
     public Product updateProduct(Long id, Product updatedProduct) throws ProductException{
@@ -138,26 +132,47 @@ public class ProductService {
 
     public List<ProductDetailDTO> getProductDetails() {
         List<Object[]> results = productRepository.findProductDetails();
-        return results.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return results.stream().map(item -> this.convertToDTO(item)).collect(Collectors.toList());
+    }
+    
+    
+    @Transactional(readOnly = true)
+    public Optional<ProductDetailDTO> getProductDetailByProductItemId(Long productItemId) {
+        List<Object[]> results = productRepository.findProductDetailByProductItemId(productItemId);
+        if (results != null && !results.isEmpty()) {
+            return Optional.of(convertToDTO(results.get(0)));
+        } else {
+            return Optional.empty();
+        }
     }
 
     private ProductDetailDTO convertToDTO(Object[] result) {
         ProductDetailDTO dto = new ProductDetailDTO();
-        dto.setProductId(((Number) result[0]).longValue());
-        dto.setProdName((String) result[1]);
-        dto.setProductImg((String) result[2]);
-        dto.setBrand((String) result[3]);
-        dto.setDescription((String) result[4]);
 
-        dto.setProductItemId(((Number) result[5]).longValue());
-        dto.setPrice(((Number) result[6]).doubleValue());
-        dto.setSalePrice(((Number) result[7]).doubleValue());
-        dto.setDiscountPercentage(((Number) result[8]).doubleValue());
-        dto.setQuantityInStock((int) result[9]);
+        try {
+            // Assuming result array order based on your SQL query
+            dto.setCategoryName((String) result[0]); // Category_name
+            dto.setProductId(((Number) result[1]).longValue()); // product_id
+            dto.setProdName((String) result[2]); // prod_name
+            dto.setProductImg((String) result[3]); // product_img
+            dto.setBrand((String) result[4]); // brand
+            dto.setDescription((String) result[5]); // description
 
-        dto.setUnitId(((Number) result[10]).longValue());
-        dto.setUnitName((String) result[11]);
+            dto.setProductItemId(((Number) result[6]).longValue()); // product_item_id
+            dto.setPrice(((Number) result[7]).doubleValue()); // price
+            dto.setSalePrice(((Number) result[8]).doubleValue()); // sale_price
+            dto.setDiscountPercentage(((Number) result[9]).doubleValue()); // discount_percentage
+            dto.setQuantityInStock(((Number) result[10]).intValue()); // qty_in_stock
+
+            dto.setUnitId(((Number) result[11]).longValue()); // unit_id
+            dto.setUnitName((String) result[12]); // unit_name
+        } catch (ClassCastException | ArrayIndexOutOfBoundsException | NullPointerException e) {
+            logger.error("Error processing result set in convertToDTO method: ", e);
+            throw new RuntimeException("Error converting to DTO", e);
+        }
 
         return dto;
     }
+
+
 }
