@@ -8,3 +8,6 @@
 1718609450898	Delete element
 1718614714331	Rename field 'name'
 1718624068285	Delete element
+1718718993798	Rename field 'product'
+1718719052369	Rename local variable 'productItem'
+1718719066152	Rename local variable 'productItem'

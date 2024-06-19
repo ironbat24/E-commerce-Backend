@@ -4,7 +4,6 @@ import com.grocery.exception.ProductItemException;
 import com.grocery.model.ProductItem;
 import com.grocery.model.Units;
 import com.grocery.repository.ProductItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,14 +13,18 @@ import java.util.Optional;
 @Service
 public class ProductItemService {
 
-    @Autowired
-    private ProductItemRepository productItemRepository;
+    private final ProductItemRepository productItemRepository;
+    private final UnitsService unitsService;
+    private final ProductService productService;
+    
+    public ProductItemService(ProductItemRepository productItemRepository, UnitsService unitsService, ProductService productService) {
+    	this.productItemRepository = productItemRepository;
+    	this.unitsService = unitsService;
+    	this.productService = productService;
+    }
 
-    @Autowired
-    private UnitsService unitsService;
 
-    @Autowired
-    private ProductService productService;
+
     
     public List<ProductItem> findAllProductItems() {
         return productItemRepository.findAll();

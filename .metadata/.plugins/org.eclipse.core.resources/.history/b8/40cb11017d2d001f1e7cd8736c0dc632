@@ -1,0 +1,117 @@
+package com.grocery.servicetests;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.grocery.exception.ProductException;
+import com.grocery.model.Category;
+import com.grocery.model.Product;
+import com.grocery.model.ProductItem;
+import com.grocery.repository.ProductRepository;
+import com.grocery.service.ProductService;
+
+@ExtendWith(MockitoExtension.class) 
+class ProductServiceTests {
+
+    @Mock
+    private ProductRepository productRepository;
+
+    @InjectMocks
+    private ProductService productService;
+
+    private Product product1;
+
+    @BeforeEach
+    void setUp() {
+        product1 = new Product();
+        product1.setId(1L);
+        product1.setProdName("Test Product");
+        product1.setImageUrl("http://example.com/test.jpg");
+        product1.setDescription("This is a test product");
+        product1.setBrand("Test Brand");
+        Category category = new Category();
+        category.setId(1L);
+        category.setName("Test Category");
+        ProductItem productItem = new ProductItem();
+        productItem.setId(1L);
+        productItem.setQuantityInStock(10);
+        productItem.setPrice(100.0);
+        productItem.setProduct(product1);
+        product1.setCategory(category);
+        product1.setProductItems(Collections.singletonList(productItem));
+    }
+
+    @Test
+    void testProductInitialization() {
+        // Verify that product is initialized correctly
+        assertNotNull(product1);
+        assertNotNull(product1.getId());
+        assertNotNull(product1.getProdName());
+        assertNotNull(product1.getImageUrl());
+        assertNotNull(product1.getDescription());
+        assertNotNull(product1.getBrand());
+        assertNotNull(product1.getCategory());
+        assertNotNull(product1.getProductItems());
+    }
+    
+    @Test
+    void testFindProductById() throws ProductException {
+        // Mocking behavior of the productRepository.findById(id)
+        Long productId = 1L;
+
+        when(productRepository.findById(productId))
+                .thenReturn(Optional.of(product1));
+
+        // Calling the method under test
+        Product foundProduct = productService.findProduct(productId);
+
+        // Verifying the result
+        assertNotNull(foundProduct);
+        assertEquals(productId, foundProduct.getId());
+        assertEquals("Test Product", foundProduct.getProdName());
+        assertEquals("http://example.com/test.jpg", foundProduct.getImageUrl());
+        assertEquals("This is a test product", foundProduct.getDescription());
+        assertEquals("Test Brand", foundProduct.getBrand());
+        assertNotNull(foundProduct.getCategory());
+        assertNotNull(foundProduct.getProductItems());
+        assertEquals(1, foundProduct.getProductItems().size());
+
+        // Verifying that productRepository.findById(id) was called once
+        verify(productRepository, times(1)).findById(productId);
+    }
+
+    @Test
+    void testFindProductByIdNotFound() {
+        // Mocking behavior of the productRepository.findById(id)
+        Long productId = 2L;
+
+        when(productRepository.findById(productId))
+                .thenReturn(Optional.empty());
+
+        // Calling the method under test and expecting ProductException
+        ProductException exception = assertThrows(ProductException.class,
+                () -> productService.findProduct(productId));
+
+        // Verifying the exception message
+        assertEquals("Product not found with id " + productId, exception.getMessage());
+
+        // Verifying that productRepository.findById(id) was called once
+        verify(productRepository, times(1)).findById(productId);
+    }
+
+    // Write other tests for ProductService using this product instance
+}

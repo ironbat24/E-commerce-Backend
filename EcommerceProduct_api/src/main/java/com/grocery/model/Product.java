@@ -6,14 +6,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
 @Table(name = "product")
 public class Product {
     @Id
@@ -41,4 +35,84 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ProductItem> productItems;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getProdName() {
+		return prodName;
+	}
+
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getBrand() {
+		return brand;
+	}
+
+	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public List<ProductItem> getProductItems() {
+		return productItems;
+	}
+
+	public void setProductItems(List<ProductItem> productItems) {
+		this.productItems = productItems;
+	}
+
+	public Product() {
+		super();
+	}
+
+	public Product(Long id, String prodName, String imageUrl, String description, String brand, Category category,
+			List<ProductItem> productItems) {
+		super();
+		this.id = id;
+		this.prodName = prodName;
+		this.imageUrl = imageUrl;
+		this.description = description;
+		this.brand = brand;
+		this.category = category;
+		this.productItems = productItems;
+	}
+
+	@Override
+	public String toString() {
+		return "Product [id=" + id + ", prodName=" + prodName + ", imageUrl=" + imageUrl + ", description="
+				+ description + ", brand=" + brand + ", category=" + category + ", productItems=" + productItems + "]";
+	}
+    
+    
 }

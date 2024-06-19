@@ -9,25 +9,27 @@ import com.grocery.model.Units;
 import com.grocery.repository.ProductRepository;
 
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    @Autowired
-    private UnitsService unitService;
+    private final UnitsService unitService;
+    
+    public ProductService(ProductRepository productRepository,CategoryService categoryService,UnitsService unitService) {
+    	this.productRepository = productRepository;
+    	this.categoryService = categoryService;
+    	this.unitService = unitService;
+    }
+    
     
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProductService.class);
 
@@ -132,7 +134,7 @@ public class ProductService {
 
     public List<ProductDetailDTO> getProductDetails() {
         List<Object[]> results = productRepository.findProductDetails();
-        return results.stream().map(item -> this.convertToDTO(item)).collect(Collectors.toList());
+        return results.stream().map(this::convertToDTO).toList();
     }
     
     
@@ -148,8 +150,6 @@ public class ProductService {
 
     private ProductDetailDTO convertToDTO(Object[] result) {
         ProductDetailDTO dto = new ProductDetailDTO();
-
-        try {
             // Assuming result array order based on your SQL query
             dto.setCategoryName((String) result[0]); // Category_name
             dto.setProductId(((Number) result[1]).longValue()); // product_id
@@ -166,10 +166,6 @@ public class ProductService {
 
             dto.setUnitId(((Number) result[11]).longValue()); // unit_id
             dto.setUnitName((String) result[12]); // unit_name
-        } catch (ClassCastException | ArrayIndexOutOfBoundsException | NullPointerException e) {
-            logger.error("Error processing result set in convertToDTO method: ", e);
-            throw new RuntimeException("Error converting to DTO", e);
-        }
 
         return dto;
     }

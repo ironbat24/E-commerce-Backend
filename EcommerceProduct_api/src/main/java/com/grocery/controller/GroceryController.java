@@ -13,7 +13,6 @@ import com.grocery.service.ProductService;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,15 +21,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 @CrossOrigin("*")
 public class GroceryController {
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private ProductItemService productItemService;
+	
+    private final ProductService productService;
+    private final ProductItemService productItemService;
+    private final CategoryService categoryService;
     
-    @Autowired
-    private CategoryService categoryService;
+    public GroceryController(ProductService productService,
+                             ProductItemService productItemService,
+                             CategoryService categoryService) {
+        this.productService = productService;
+        this.productItemService = productItemService;
+        this.categoryService = categoryService;
+    }
 
     // Product Endpoints
 

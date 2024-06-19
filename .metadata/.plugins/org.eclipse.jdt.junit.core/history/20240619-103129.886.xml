@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="EcommerceApiApplicationTests" project="EcommerceProduct_api" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="com.grocery.EcommerceApiApplicationTests" time="1.516" displayname="EcommerceApiApplicationTests" uniqueid="[engine:junit-jupiter]/[class:com.grocery.EcommerceApiApplicationTests]">
+    <testcase name="contextLoads" classname="com.grocery.EcommerceApiApplicationTests" time="1.516" displayname="contextLoads()" uniqueid="[engine:junit-jupiter]/[class:com.grocery.EcommerceApiApplicationTests]/[method:contextLoads()]"/>
+  </testsuite>
+</testrun>

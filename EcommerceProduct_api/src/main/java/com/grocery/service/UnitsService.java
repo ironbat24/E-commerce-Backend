@@ -2,7 +2,6 @@ package com.grocery.service;
 
 import com.grocery.model.Units;
 import com.grocery.repository.UnitsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -10,8 +9,12 @@ import java.util.Optional;
 @Service
 public class UnitsService {
 
-    @Autowired
-    private UnitsRepository unitsRepository;
+    
+    private final UnitsRepository unitsRepository;
+    
+    public UnitsService(UnitsRepository unitsRepository) {
+    	this.unitsRepository = unitsRepository;
+    }
 
     public Optional<Units> findByUnitName(String unitName) {
         return unitsRepository.findByUnitName(unitName);

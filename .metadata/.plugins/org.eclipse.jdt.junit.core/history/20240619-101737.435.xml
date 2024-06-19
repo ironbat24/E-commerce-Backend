@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="EcommerceProduct_api" project="EcommerceProduct_api" tests="5" started="5" failures="0" errors="0" ignored="0">
+  <testsuite name="com.grocery.servicetests.ProductServiceTests" time="5.122" displayname="ProductServiceTests" uniqueid="[engine:junit-jupiter]/[class:com.grocery.servicetests.ProductServiceTests]">
+    <testcase name="testProductInitialization" classname="com.grocery.servicetests.ProductServiceTests" time="4.955" displayname="testProductInitialization()" uniqueid="[engine:junit-jupiter]/[class:com.grocery.servicetests.ProductServiceTests]/[method:testProductInitialization()]"/>
+    <testcase name="testFindProductById" classname="com.grocery.servicetests.ProductServiceTests" time="0.138" displayname="testFindProductById()" uniqueid="[engine:junit-jupiter]/[class:com.grocery.servicetests.ProductServiceTests]/[method:testFindProductById()]"/>
+    <testcase name="testFindAllProducts" classname="com.grocery.servicetests.ProductServiceTests" time="0.008" displayname="testFindAllProducts()" uniqueid="[engine:junit-jupiter]/[class:com.grocery.servicetests.ProductServiceTests]/[method:testFindAllProducts()]"/>
+    <testcase name="testFindProductByIdNotFound" classname="com.grocery.servicetests.ProductServiceTests" time="0.014" displayname="testFindProductByIdNotFound()" uniqueid="[engine:junit-jupiter]/[class:com.grocery.servicetests.ProductServiceTests]/[method:testFindProductByIdNotFound()]"/>
+  </testsuite>
+  <testsuite name="com.grocery.EcommerceApiApplicationTests" time="0.039" displayname="EcommerceApiApplicationTests" uniqueid="[engine:junit-jupiter]/[class:com.grocery.EcommerceApiApplicationTests]">
+    <testcase name="contextLoads" classname="com.grocery.EcommerceApiApplicationTests" time="0.039" displayname="contextLoads()" uniqueid="[engine:junit-jupiter]/[class:com.grocery.EcommerceApiApplicationTests]/[method:contextLoads()]"/>
+  </testsuite>
+</testrun>
