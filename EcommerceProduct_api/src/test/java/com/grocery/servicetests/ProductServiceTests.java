@@ -24,13 +24,21 @@ import com.grocery.model.Category;
 import com.grocery.model.Product;
 import com.grocery.model.ProductItem;
 import com.grocery.repository.ProductRepository;
+import com.grocery.service.CategoryService;
 import com.grocery.service.ProductService;
+import com.grocery.service.UnitsService;
 
 @ExtendWith(MockitoExtension.class) 
 class ProductServiceTests {
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private CategoryService categoryService;
+
+    @Mock
+    private UnitsService unitService;
 
     @InjectMocks
     private ProductService productService;
@@ -174,6 +182,4 @@ class ProductServiceTests {
         // Verifying that productRepository.findById(id) was called once
         verify(productRepository, times(1)).findById(productId);
     }
-    
-    
 }

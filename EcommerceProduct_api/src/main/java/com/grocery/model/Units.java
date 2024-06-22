@@ -20,7 +20,7 @@ public class Units {
     @Column(name = "unit_id")
     private Long id;
 
-    @Column(name = "unit_name")
+    @Column(name = "unit_name", unique = true)
     private String unitName;
 
     @OneToMany(mappedBy = "unit", cascade = CascadeType.DETACH)

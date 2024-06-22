@@ -16,6 +16,7 @@
 	<description>Backend API calls for Products</description>
 	<properties>
 		<java.version>17</java.version>
+		<sonar.coverage.exclusions>src/test/</sonar.coverage.exclusions>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -43,7 +44,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+<!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+		<dependency>
+		    <groupId>com.github.ben-manes.caffeine</groupId>
+		    <artifactId>caffeine</artifactId>
+		    <version>3.1.8</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

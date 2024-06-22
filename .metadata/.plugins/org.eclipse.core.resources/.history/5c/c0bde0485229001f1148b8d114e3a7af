@@ -1,9 +1,0 @@
-package com.grocery.service;
-
-import com.grocery.model.Category;
-
-public interface CategoryService {
-
-	Category findCategoryById(Long categoryId);
-
-}

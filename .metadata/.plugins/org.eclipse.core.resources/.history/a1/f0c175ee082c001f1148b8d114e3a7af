@@ -1,9 +1,0 @@
-package com.grocery.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.grocery.model.Units;
-
-public interface UnitsRepository extends JpaRepository<Units, Long>{
-
-}

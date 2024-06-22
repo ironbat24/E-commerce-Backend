@@ -10,7 +10,7 @@ import java.util.Optional;
 public class UnitsService {
 
     
-    private final UnitsRepository unitsRepository;
+    private UnitsRepository unitsRepository;
     
     public UnitsService(UnitsRepository unitsRepository) {
     	this.unitsRepository = unitsRepository;

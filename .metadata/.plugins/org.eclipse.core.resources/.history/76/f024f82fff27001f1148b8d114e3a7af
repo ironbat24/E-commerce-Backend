@@ -1,5 +1,0 @@
-package com.grocery.exception;
-
-public class UnitsException {
-
-}

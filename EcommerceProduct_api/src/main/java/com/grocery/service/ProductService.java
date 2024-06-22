@@ -11,23 +11,25 @@ import com.grocery.repository.ProductRepository;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductService {
+	
+    private ProductRepository productRepository;
+    private CategoryService categoryService;
+    private UnitsService unitService;
+    private ImageStorageService imageStorageService;
 
-    private final ProductRepository productRepository;
-
-    private final CategoryService categoryService;
-
-    private final UnitsService unitService;
-    
-    public ProductService(ProductRepository productRepository,CategoryService categoryService,UnitsService unitService) {
-    	this.productRepository = productRepository;
-    	this.categoryService = categoryService;
-    	this.unitService = unitService;
+    public ProductService(ProductRepository productRepository, CategoryService categoryService,
+                          UnitsService unitService, ImageStorageService imageStorageService) {
+        this.productRepository = productRepository;
+        this.categoryService = categoryService;
+        this.unitService = unitService;
+        this.imageStorageService = imageStorageService;
     }
     
     
@@ -40,18 +42,32 @@ public class ProductService {
     public Product findProduct(Long id) throws ProductException{
     	return productRepository.findById(id).orElseThrow(() -> new ProductException("Product not found with id " + id));
     }
-
+    
 
 
     @Transactional
-    public Product saveProductWithDetails(Product product) {
+    public Product saveProduct(Product product, MultipartFile categoryImageFile, MultipartFile productImageFile) {
         logger.info("Received product: {}", product);
-        
-        // Save or find category
+
+        // Save or find category and its image
         if (product.getCategory() != null) {
-            Category category = categoryService.findByName(product.getCategory().getName())
-                    .orElseGet(() -> categoryService.saveCategory(product.getCategory()));
-            product.setCategory(category);
+            Category category = product.getCategory();
+            if (categoryImageFile != null && !categoryImageFile.isEmpty()) {
+                String categoryImageUrl = imageStorageService.storeFile(categoryImageFile);
+                category.setImageUrl(categoryImageUrl);
+            }
+            Optional<Category> existingCategory = categoryService.findByName(category.getName());
+            Category savedCategory = existingCategory.orElseGet(() -> {
+                categoryService.saveCategory(category, categoryImageFile);
+                return category;
+            });
+            product.setCategory(savedCategory);
+        }
+
+        // Store the product image file
+        if (productImageFile != null && !productImageFile.isEmpty()) {
+            String productImageUrl = imageStorageService.storeFile(productImageFile);
+            product.setImageUrl(productImageUrl);
         }
 
         // Save product items and units
@@ -89,22 +105,34 @@ public class ProductService {
 
 
     @Transactional
-    public Product updateProduct(Long id, Product updatedProduct) throws ProductException{
-        Optional<Product> existingProductOpt = Optional.ofNullable(productRepository.findById(id)
-        		.orElseThrow(() -> new ProductException("Product not found with id " + id)));
-        Product existingProduct = existingProductOpt.get();
+    public Product updateProduct(Long id, Product updatedProduct, MultipartFile categoryImageFile, MultipartFile productImageFile) throws ProductException {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ProductException("Product not found with id " + id));
 
-        // Update product details
+
         existingProduct.setProdName(updatedProduct.getProdName());
         existingProduct.setBrand(updatedProduct.getBrand());
         existingProduct.setDescription(updatedProduct.getDescription());
-        existingProduct.setImageUrl(updatedProduct.getImageUrl());
+        
 
-        // Update or find category
+        if (productImageFile != null && !productImageFile.isEmpty()) {
+            String productImageUrl = imageStorageService.storeFile(productImageFile);
+            existingProduct.setImageUrl(productImageUrl);
+        }
+
+
         if (updatedProduct.getCategory() != null) {
-            Category category = categoryService.findByName(updatedProduct.getCategory().getName())
-                    .orElseGet(() -> categoryService.saveCategory(updatedProduct.getCategory()));
-            existingProduct.setCategory(category);
+            Category category = updatedProduct.getCategory();
+            if (categoryImageFile != null && !categoryImageFile.isEmpty()) {
+                String categoryImageUrl = imageStorageService.storeFile(categoryImageFile);
+                category.setImageUrl(categoryImageUrl);
+            }
+            Optional<Category> existingCategory = categoryService.findByName(category.getName());
+            Category savedCategory = existingCategory.orElseGet(() -> {
+                categoryService.saveCategory(category, categoryImageFile);
+                return category;
+            });
+            existingProduct.setCategory(savedCategory);
         }
 
         // Update product items
@@ -147,10 +175,30 @@ public class ProductService {
             return Optional.empty();
         }
     }
+    
+    public List<ProductDetailDTO> searchProductDetails(String query) {
+        List<Object[]> results = productRepository.searchProduct(query);
+        return results.stream().map(this::convertToDTO).toList();
+    }
+
+    
+    public List<ProductDetailDTO> getProductDetailsByCategory(String categoryName) {
+        List<Object[]> results = productRepository.findByCategory(categoryName);
+        return results.stream().map(this::convertToDTO).toList();
+    }
+    
+    public List<ProductDetailDTO> displayProductsByDiscount() {
+        List<Object[]> results = productRepository.displaytopdiscounts();
+        return results.stream().map(this::convertToDTO).toList();
+    }
+    
+    public List<ProductDetailDTO> getProductDetailsByProdId(Long productId){
+    	List<Object[]> results = productRepository.displayProductsById(productId);
+    	return results.stream().map(this::convertToDTO).toList();
+    }
 
     private ProductDetailDTO convertToDTO(Object[] result) {
         ProductDetailDTO dto = new ProductDetailDTO();
-            // Assuming result array order based on your SQL query
             dto.setCategoryName((String) result[0]); // Category_name
             dto.setProductId(((Number) result[1]).longValue()); // product_id
             dto.setProdName((String) result[2]); // prod_name
